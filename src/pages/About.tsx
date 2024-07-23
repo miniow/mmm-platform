@@ -1,12 +1,12 @@
 import React from 'react';
 
-function About() {
+const About: React.FC = () => {
   return (
     <div>
       <h1>About Page</h1>
-      <p>This is the about page.</p>
+      <p>Learn more about us on this page.</p>
     </div>
   );
-}
+};
 
 export default About;

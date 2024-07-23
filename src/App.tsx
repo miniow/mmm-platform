@@ -1,11 +1,45 @@
 import React from 'react';
-import AppRouter from './AppRouter';
-function App() {
-  return (
-    <div>
-      <AppRouter />
-    </div>
-  );
-}
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Login from './components/Login';
+import Register from './components/Register';
+import Home from './pages/Home';
+import About from './pages/About';
+import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './pages/Profile';
+import EtlFlow from './pages/EtlFlow';
 
-export default App
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <EtlFlow />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+};
+
+export default App;
