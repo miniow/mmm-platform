@@ -1,59 +1,46 @@
-import React, { useState, useCallback } from 'react';
-import ReactFlow, { addEdge, Background, Controls, MiniMap, Node, Connection, Edge, useNodesState, useEdgesState } from 'reactflow';
+import React, { useState } from 'react';
+import ReactFlow, { ReactFlowProvider, addEdge, Controls, Background, MiniMap } from 'react-flow-renderer';
 import 'reactflow/dist/style.css';
-import CustomInputNode from '../components/CustomInputNode';
-import '../styles/EtlFlow.scss'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-const nodeTypes = { customInput: CustomInputNode };
-
-const initialNodes: Node[] = [
-    {
-        id: '1',
-        type: 'customInput',
-        position: { x: 250, y: 0 },
-        data: { label: 'Custom Input Node' },
-    },
-];
+import CustomNode from '../components/CustomNode';
+import '../styles/EtlFlow.scss';
 
 const EtlFlow: React.FC = () => {
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState([]);
 
-    const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
-    const onElementsRemove = useCallback((elementsToRemove) => setNodes((nds) => removeElements(elementsToRemove, nds)), []);
-
-    const addInputNode = () => {
+    const onAddNode = () => {
         const newNode = {
-            id: (nodes.length + 1).toString(),
-            type: 'customInput',
-            position: { x: Math.random() * 250, y: Math.random() * 250 },
-            data: { label: `Input Node ${nodes.length + 1}` },
+            id: `${nodes.length}`,
+            type: 'custom',
+            position: { x: Math.random() * 500, y: Math.random() * 500 },
+            data: { label: 'New Node', onRemove: () => onRemoveNode(`${nodes.length}`) },
         };
-        setNodes((nds) => nds.concat(newNode));
+        setNodes([...nodes, newNode]);
     };
 
+    const onRemoveNode = (id) => {
+        setNodes(nodes.filter((node) => node.id !== id));
+    };
+
+    const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
+
     return (
-        <div className="etl-flow">
-            <h1>ETLflow</h1>
-            <button onClick={addInputNode} className="add-node-button">Add Input Node</button>
-            <div className="flow-container">
+        <ReactFlowProvider>
+            <div className="etl-flow">
+                <button onClick={onAddNode}>Add Source Node</button>
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
-                    onElementsRemove={onElementsRemove}
-                    nodeTypes={nodeTypes}
-                    fitView
+                    nodeTypes={{ custom: CustomNode }}
+                    style={{ width: '100%', height: '90vh' }}
                 >
-                    <MiniMap />
                     <Controls />
                     <Background />
+                    <MiniMap />
                 </ReactFlow>
             </div>
-        </div>
+        </ReactFlowProvider>
     );
 };
 
