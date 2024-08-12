@@ -1,0 +1,37 @@
+@import '../styles/variables';
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: $primaryBackColor1;
+    color: $secondColor;
+}
+
+.navbar-logo img {
+    height: 40px;
+}
+
+.navbar-links {
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar-links a {
+    color: $secondColor;
+    text-decoration: none;
+}
+
+.navbar-links button {
+    background: none;
+    border: none;
+    color: $secondColor;
+    cursor: pointer;
+}
+
+.navbar-links a:hover,
+.navbar-links button:hover {
+    text-decoration: underline;
+}

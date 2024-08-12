@@ -1,0 +1,27 @@
+.workspaces {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+
+    .workspace-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .workspace-add {
+        width: 200px;
+        height: 150px;
+        border: 2px dashed #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        .workspace-add-icon {
+            font-size: 48px;
+        }
+    }
+}

@@ -9,6 +9,7 @@ import About from './pages/About';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './pages/Profile';
 import EtlFlow from './pages/EtlFlow';
+import Workspaces from './pages/Workspaces';
 
 const App: React.FC = () => {
   return (
@@ -21,10 +22,10 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/dashboard"
+            path="/workspace"
             element={
               <ProtectedRoute>
-                <EtlFlow />
+                <Workspaces />
               </ProtectedRoute>
             }
           />
@@ -33,6 +34,20 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/dataflow'
+            element={
+              <ProtectedRoute>
+                <EtlFlow />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/models'
+            element={
+              <ProtectedRoute>
+                <></>
               </ProtectedRoute>
             }
           />
