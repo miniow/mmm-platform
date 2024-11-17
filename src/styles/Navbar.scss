@@ -1,0 +1,51 @@
+/* src/styles/Navbar.scss */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+  
+    .navbar-left, .navbar-right {
+      display: flex;
+      align-items: center;
+    }
+  
+    a, button {
+      color: #fff;
+      margin-right: 15px;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  
+    .navbar-left a {
+      margin-right: 20px;
+    }
+  
+    .navbar-right button {
+      margin-right: 10px;
+    }
+  
+    .link-button {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+    }
+  
+    .link-button:hover {
+      color: lightblue;
+    }
+  
+    .error {
+      color: red;
+      margin-bottom: 10px;
+    }
+  }
+  
