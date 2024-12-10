@@ -13,10 +13,8 @@ interface Workspace {
 const Workspaces: React.FC = () => {
     const [workspaces, setWorkspaces] = useState<Workspace[]>([
         { name: 'Name', models: 0, date: '20 Jul 2024' },
-        { name: 'Name', models: 0, date: '20 Jul 2024' },
-        { name: 'Name', models: 0, date: '20 Jul 2024' },
-        { name: 'Name', models: 0, date: '20 Jul 2024' },
-        { name: 'Name', models: 0, date: '20 Jul 2024' },
+
+
     ]);
 
     const [showForm, setShowForm] = useState(false);
@@ -44,7 +42,6 @@ const Workspaces: React.FC = () => {
                         key={index}
                         name={workspace.name}
                         models={workspace.models}
-                        date={workspace.date}
                         onRemove={() => removeWorkspace(index)}
                     />
                 ))}

@@ -21,7 +21,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import FileSourceNode from '../components/nodes/CustomNode';
 
-let id = 3; // Początkowy identyfikator dla nowych węzłów
+
+let id = 3; 
 
 const initialNodes: Node[] = [
 ];
@@ -45,7 +46,6 @@ const edgeTypes: EdgeTypes = {
 };
 
 const onNodeDrag: OnNodeDrag = (_, node) => {
-  console.log('drag event', node.data);
 };
 
 const DataFlow: React.FC = () => {

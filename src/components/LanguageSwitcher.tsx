@@ -1,35 +1,49 @@
+// src/components/LanguageSwitcher.tsx
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Select from 'react-select';
+import '../styles/LanguageSwitcher.scss'; // Importujemy plik SCSS
 
+interface OptionType {
+  value: string;
+  label: string;
+  flag: string;
+}
+
+const options: OptionType[] = [
+  { value: 'pl', label: 'Polski', flag: '🇵🇱' },
+  { value: 'en', label: 'English', flag: '🇺🇸' },
+];
 
 const LanguageSwitcher: React.FC = () => {
-    const { i18n } = useTranslation();
-  
-    // Funkcja obsługująca zmianę języka
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedLanguage = event.target.value;
-      i18n.changeLanguage(selectedLanguage);
-    };
-  
-    // Pobranie aktualnego języka
-    const currentLanguage = i18n.language || 'en';
-  
-    return (
-        <select
-          id="language-select"
-          value={currentLanguage}
-          onChange={handleChange}
-          style={{
-            padding: '5px 10px',
-            fontSize: '16px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        >flag
-          <option value="pl">pl</option>
-          <option value="en">en </option>
-        </select>
-    );
+  const { i18n } = useTranslation();
+
+  const handleChange = (selectedOption: OptionType | null) => {
+    if (selectedOption) {
+      i18n.changeLanguage(selectedOption.value);
+    }
   };
-  
-  export default LanguageSwitcher;
+
+  const currentLanguage = options.find(option => option.value === (i18n.language || 'en'));
+
+  return (
+    <div className="language-switcher">
+      <Select
+        value={currentLanguage}
+        onChange={handleChange}
+        options={options}
+        isSearchable={false}
+        className="language-select"
+        classNamePrefix="react-select"
+        formatOptionLabel={(option: OptionType) => (
+          <div className="option">
+            <span className="flag">{option.flag}</span>
+            <span className="label">{option.label}</span>
+          </div>
+        )}
+      />
+    </div>
+  );
+};
+
+export default LanguageSwitcher;

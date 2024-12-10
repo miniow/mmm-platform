@@ -1,22 +1,58 @@
-import React, { useState, useCallback } from 'react';
-import type { NodeProps } from '@xyflow/react';
+// src/components/FileSourceNode.tsx
+import React, { useState, useCallback, useEffect, useContext } from 'react';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 import Modal from '../Modal';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataContext } from '../../context/DataContext'; // Import konte
 
 type FileSourceData = {
+  id: string;
   fileName: string;
   filePath: string;
+  type:"source"
   onDelete: (id: string) => void;
 };
 
 const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [tableData, setTableData] = useState<any[]>([]);
-  const [columns, setColumns] = useState<GridColDef[]>([]);
-
+  const { tableData, setTableData, columns, setColumns } = useContext(DataContext)!; 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  // Klucz do localStorage unikalny dla każdego węzła
+  const storageKeyData = `fileSourceData-${id}`;
+  const storageKeyColumns = `fileSourceColumns-${id}`;
+
+  // Ładowanie danych z localStorage przy montowaniu komponentu
+  useEffect(() => {
+    const savedData = localStorage.getItem(storageKeyData);
+    const savedColumns = localStorage.getItem(storageKeyColumns);
+
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      setTableData(parsedData);
+    }
+
+    if (savedColumns) {
+      const parsedCols = JSON.parse(savedColumns);
+      setColumns(parsedCols);
+    }
+  }, [storageKeyData, storageKeyColumns, setTableData, setColumns]);
+
+  // Zapisywanie danych do localStorage przy każdej zmianie tableData
+  useEffect(() => {
+    if (tableData.length > 0) {
+      localStorage.setItem(storageKeyData, JSON.stringify(tableData));
+    }
+  }, [tableData, storageKeyData]);
+
+  // Zapisywanie kolumn do localStorage przy każdej zmianie columns
+  useEffect(() => {
+    if (columns.length > 0) {
+      localStorage.setItem(storageKeyColumns, JSON.stringify(columns));
+    }
+  }, [columns, storageKeyColumns]);
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -43,7 +79,7 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
         reader.onload = (event) => {
           const text = event.target?.result;
           if (typeof text === 'string') {
-            parseCSV(text, ';'); // Używamy średnika jako separatora
+            parseCSV(text, '\t'); // Separator tab
           }
         };
         reader.readAsText(file);
@@ -62,7 +98,7 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
         reader.onload = (event) => {
           const text = event.target?.result;
           if (typeof text === 'string') {
-            parseCSV(text, ';'); // Używamy średnika jako separatora
+            parseCSV(text, '\t'); // Separator tab
           }
         };
         reader.readAsText(file);
@@ -72,7 +108,7 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
     }
   };
 
-  const parseCSV = (csv: string, delimiter: string = ',') => {
+  const parseCSV = (csv: string, delimiter: string = '\t') => {
     const lines = csv.split('\n').filter((line) => line.trim() !== '');
     if (lines.length === 0) {
       alert('Plik CSV jest pusty.');
@@ -80,6 +116,15 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
     }
 
     const headers = lines[0].split(delimiter).map(header => header.trim());
+
+    // Minimalna liczba kolumn do obsługi
+    const requiredColumns = ['FB', 'TV', 'Radio', 'Sprzedaż'];
+    const hasAllRequired = requiredColumns.every(col => headers.includes(col));
+
+    if (!hasAllRequired) {
+      alert(`Plik CSV musi zawierać następujące kolumny: ${requiredColumns.join(', ')}`);
+      return;
+    }
 
     const parsedColumns: GridColDef[] = headers.map((header) => ({
       field: header,
@@ -92,7 +137,9 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
       const values = line.split(delimiter);
       const row: any = { id: index + 1 }; // Unikalny ID dla każdego wiersza
       headers.forEach((header, i) => {
-        row[header] = values[i]?.trim() || ''; // Przypisanie wartości do odpowiednich kolumn
+        // Zamień przecinki na kropki i parsuj do liczby
+        const value = values[i]?.trim().replace(',', '.') || '0';
+        row[header] = parseFloat(value);
       });
       return row;
     });
@@ -102,10 +149,10 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
   };
 
   return (
+    <>
+    <Handle type="source" position={Position.Right} id="a" />
     <div style={nodeStyle}>
       <div style={infoContainerStyle}>
-        <div><strong>Nazwa pliku:</strong> {data.fileName}</div>
-        <div><strong>Ścieżka:</strong> {data.filePath}</div>
       </div>
       <div style={buttonsContainerStyle}>
         <button onClick={() => data.onDelete(id)} style={deleteButtonStyle}>
@@ -153,17 +200,18 @@ const FileSourceNode: React.FC<NodeProps<FileSourceData>> = ({ id, data }) => {
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5, 10, 20]}
-                autoHeight
                 disableSelectionOnClick
               />
               <button onClick={closeModal} style={closeButtonStyle}>
                 Zamknij
               </button>
+
             </div>
           )}
         </div>
       </Modal>
     </div>
+    </>
   );
 };
 
@@ -240,7 +288,7 @@ const fileInputLabelStyle: React.CSSProperties = {
 const dataGridContainerStyle: React.CSSProperties = {
   marginTop: '20px',
   width: '100%',
-  height: '400px',
+  height: '350px', // Stała wysokość dla kontenera DataGrid
   display: 'flex',
   flexDirection: 'column',
   gap: '10px',

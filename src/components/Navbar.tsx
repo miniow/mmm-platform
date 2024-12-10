@@ -7,6 +7,7 @@ import Login from './Login';
 import Register from './Register';
 import LanguageSwitcher from './LanguageSwitcher';
 import '../styles/Navbar.scss'; // Dodaj własne style dla navbar
+import { FaHome, FaInfoCircle, FaThLarge, FaUser, FaDatabase, FaCubes, FaSignInAlt, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -36,55 +37,77 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-left">
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        {isAuthenticated && (
-          <>
-            <Link to="/workspace">Workspaces</Link>
-            <Link to="/profile">Profile</Link>
-            <Link to="/datapipelines">Data</Link>
-            <Link to="/models">Models</Link>
-          </>
-        )}
-      </div>
-      <div className="navbar-right">
-        {isAuthenticated ? (
-          <button onClick={handleLogout}>Logout</button>
-        ) : (
-          <>
-            <button onClick={openLogin}>Login</button>
-            <button onClick={openRegister}>Register</button>
-          </>
-        )}
-      </div>
-
-      <Modal isOpen={isLoginOpen} onClose={closeModals}>
-        <Login onClose={closeModals} />
-        <p>
-          Don't have an account?{' '}
-          <button
-            onClick={openRegister}
-            className="link-button"
-          >
-            Register
-          </button>
-        </p>
-      </Modal>
-      <Modal isOpen={isRegisterOpen} onClose={closeModals}>
-        <Register onClose={closeModals} />
-        <p>
-          Already have an account?{' '}
-          <button
-            onClick={openLogin}
-            className="link-button"
-          >
+    <div className="navbar-left">
+      <Link to="/" className="navbar-link">
+        <FaHome className="navbar-icon" />
+        Home
+      </Link>
+      <Link to="/about" className="navbar-link">
+        <FaInfoCircle className="navbar-icon" />
+        About
+      </Link>
+      {isAuthenticated && (
+        <>
+          <Link to="/workspace" className="navbar-link">
+            <FaThLarge className="navbar-icon" />
+            Workspaces
+          </Link>
+          <Link to="/profile" className="navbar-link">
+            <FaUser className="navbar-icon" />
+            Profile
+          </Link>
+          <Link to="/datapipelines" className="navbar-link">
+            <FaDatabase className="navbar-icon" />
+            Data
+          </Link>
+          <Link to="/models" className="navbar-link">
+            <FaCubes className="navbar-icon" />
+            Models
+          </Link>
+        </>
+      )}
+    </div>
+    <div className="navbar-right">
+      {isAuthenticated ? (
+        <button onClick={handleLogout} className="navbar-button">
+          <FaSignOutAlt className="navbar-icon" />
+          Logout
+        </button>
+      ) : (
+        <>
+          <button onClick={openLogin} className="navbar-button">
+            <FaSignInAlt className="navbar-icon" />
             Login
           </button>
-        </p>
-      </Modal>
-      <LanguageSwitcher></LanguageSwitcher>
-    </nav>
+          <button onClick={openRegister} className="navbar-button">
+            <FaUserPlus className="navbar-icon" />
+            Register
+          </button>
+        </>
+      )}
+    </div>
+
+    <Modal isOpen={isLoginOpen} onClose={closeModals}>
+      <Login onClose={closeModals} />
+      <p>
+        Don't have an account?{' '}
+        <button onClick={openRegister} className="link-button">
+          Register
+        </button>
+      </p>
+    </Modal>
+    <Modal isOpen={isRegisterOpen} onClose={closeModals}>
+      <Register onClose={closeModals} />
+      <p>
+        Already have an account?{' '}
+        <button onClick={openLogin} className="link-button">
+          Login
+        </button>
+      </p>
+    </Modal>
+    <LanguageSwitcher />
+  </nav>
+
   );
 };
 

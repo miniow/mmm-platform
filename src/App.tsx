@@ -11,9 +11,13 @@ import DataPipelines from './pages/DataPipelines';
 import DataFlow from './pages/DataFlow'
 import Workspaces from './pages/Workspaces';
 import './i18n';
+import { DataProvider } from './context/DataContext';
+import Models from './pages/Models';
+
 const App: React.FC = () => {
   return (
     <Router>
+      <DataProvider>
       <AuthProvider>
         <Navbar />
         <Routes>
@@ -49,12 +53,13 @@ const App: React.FC = () => {
             path="/models"
             element={
               <ProtectedRoute>
-                <></>
+                <Models/>
               </ProtectedRoute>
             }
           />
         </Routes>
       </AuthProvider>
+      </DataProvider>
     </Router>
     
   );
