@@ -1,11 +1,15 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const About: React.FC = () => {
+  const { t } = useTranslation();
   return (
-    <div>
-      <h1>About Page</h1>
-      <p>Learn more about us on this page.</p>
-    </div>
+    <section className="about-section">
+  <h2>{t('aboutTitle')}</h2>
+  <p className="footer-info">
+        {t('PBSystemInfo')}
+      </p>
+</section>
   );
 };
 

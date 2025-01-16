@@ -8,7 +8,6 @@ const api = axios.create({
   },
 });
 
-// Function to set the Authorization token for authenticated requests
 export const setAuthToken = (token: string | null) => {
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -17,8 +16,6 @@ export const setAuthToken = (token: string | null) => {
   }
 };
 
-// API functions
-
 // Register
 export const register = async (email: string, password: string) => {
   const response = await api.post('/register', { email, password });
@@ -26,25 +23,21 @@ export const register = async (email: string, password: string) => {
 };
 
 // Login
-export const login = async (
-  email: string,
-  password: string,
-  twoFactorCode?: string,
-  twoFactorRecoveryCode?: string
-) => {
-  const response = await api.post('/login', {
-    email,
-    password,
-    twoFactorCode,
-    twoFactorRecoveryCode,
-  });
-  return response.data;
+export const login = async (email: string, password: string) => {
+  const response = await api.post("/login", { email, password });
+  const { tokenType, accessToken, expiresIn, refreshToken } = response.data;
+  setAuthToken(accessToken);
+  return { tokenType, accessToken, expiresIn, refreshToken };
 };
 
-// Refresh Token
 export const refreshToken = async (refreshToken: string) => {
-  const response = await api.post('/refresh', { refreshToken });
-  return response.data;
+  const response = await api.post("/refresh", { refreshToken });
+  const { tokenType, accessToken, expiresIn, refreshToken: newRefreshToken } = response.data;
+  setAuthToken(accessToken);
+  return { tokenType, accessToken, expiresIn, refreshToken: newRefreshToken };
 };
-
+export const getUserRoles = async () => {
+  const response = await api.get("/api/users/roles");
+  return response.data; 
+};
 export default api;

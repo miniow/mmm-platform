@@ -1,0 +1,54 @@
+// src/styles/SelectPipeline.scss
+.select-pipeline {
+    padding: 20px;
+
+    h2 {
+        margin-bottom: 20px;
+    }
+
+    .create-pipeline-button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 20px;
+
+        &:hover {
+            background-color: #45a049;
+        }
+    }
+
+    .pipeline-list {
+        list-style: none;
+        padding: 0;
+
+        .pipeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+
+            span {
+                font-size: 16px;
+            }
+
+            button {
+                padding: 5px 10px;
+                background-color: #2196F3;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #0b7dda;
+                }
+            }
+        }
+    }
+}

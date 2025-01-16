@@ -1,10 +1,53 @@
 {
+    "PBSystemInfo": "The system was developed at the Faculty of Computer Science of the Bialystok University of Technology.",
     "homeTitle": "Home Page",
+    "aboutTitle": "About",
     "welcomeMessage": "Welcome to the home page!",
     "learnMore": "Learn More",
     "features": "Our Features",
     "benefits": "Why Us?",
     "startToday": "Start Today!",
-    "contactUs": "Contact Us"
-}
+    "contactUs": "Contact Us",
+    
+    "homeFeature1Title": "Data Analysis",
+    "homeFeature1Description": "Process and analyze large sets of marketing data in real-time.",
+    
+    "homeFeature2Title": "Forecasting",
+    "homeFeature2Description": "Forecast future marketing campaign outcomes based on historical data.",
+    
+    "homeFeature3Title": "Budget Optimization",
+    "homeFeature3Description": "Optimize the allocation of your marketing budget for maximum efficiency.",
+    
+    "benefitsItem1": "Precise predictive models",
+    "benefitsItem2": "Intuitive user interface",
+    "benefitsItem3": "Expert support",
+    "benefitsItem4": "Integration with popular marketing tools",
+
+    "navbarHome": "Home",
+    "navbarWorkspaces": "Workspaces",
+    "navbarData": "Data",
+    "navbarProfile": "Profile",
+    "navbarAbout": "About",
+    "navbarAdmin": "Admin",
+    "navbarLogout": "Logout",
+    "navbarLogin": "Login",
+    "navbarRegister": "Register",
+    "navbarNoAccount": "Don't have an account?",
+    "navbarRegisterNow": "Register",
+    "navbarHaveAccount": "Already have an account?",
+    "navbarLoginNow": "Login",
+    
+    "registerTitle": "Register",
+    "registerEmailLabel": "Email:",
+    "registerPasswordLabel": "Password:",
+    "registerButton": "Register",
+    "registrationError": "Registration failed.",
+  
+    "loginTitle": "Login",
+
+    "loginEmailLabel": "Email:",
+    "loginPasswordLabel": "Password:",
+    "loginButton": "Login",
+    "loginError": "Login failed."
+  }
   

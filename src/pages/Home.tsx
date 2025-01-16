@@ -1,6 +1,7 @@
+// src/components/Home.tsx
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import '../styles/Home.scss'; // Upewnij się, że masz odpowiedni plik CSS
+import '../styles/Home.scss'; // Ensure the CSS file exists
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -17,16 +18,16 @@ const Home: React.FC = () => {
         <h2>{t('features')}</h2>
         <div className="features-grid">
           <div className="feature-item">
-            <h3>Analiza Danych</h3>
-            <p>Przetwarzaj i analizuj duże zbiory danych marketingowych w czasie rzeczywistym.</p>
+            <h3>{t('homeFeature1Title')}</h3>
+            <p>{t('homeFeature1Description')}</p>
           </div>
           <div className="feature-item">
-            <h3>Prognozowanie</h3>
-            <p>Prognozuj przyszłe wyniki kampanii marketingowych na podstawie historycznych danych.</p>
+            <h3>{t('homeFeature2Title')}</h3>
+            <p>{t('homeFeature2Description')}</p>
           </div>
           <div className="feature-item">
-            <h3>Optymalizacja Budżetu</h3>
-            <p>Optymalizuj alokację budżetu marketingowego dla maksymalnej efektywności.</p>
+            <h3>{t('homeFeature3Title')}</h3>
+            <p>{t('homeFeature3Description')}</p>
           </div>
         </div>
       </section>
@@ -34,10 +35,10 @@ const Home: React.FC = () => {
       <section className="benefits-section">
         <h2>{t('benefits')}</h2>
         <ul>
-          <li>Precyzyjne modele predykcyjne</li>
-          <li>Intuicyjny interfejs użytkownika</li>
-          <li>Wsparcie ekspertów</li>
-          <li>Integracja z popularnymi narzędziami marketingowymi</li>
+          <li>{t('benefitsItem1')}</li>
+          <li>{t('benefitsItem2')}</li>
+          <li>{t('benefitsItem3')}</li>
+          <li>{t('benefitsItem4')}</li>
         </ul>
       </section>
 

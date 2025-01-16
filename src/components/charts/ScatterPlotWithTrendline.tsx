@@ -43,7 +43,7 @@ const ScatterPlotWithTrendline: React.FC<ScatterPlotWithTrendlineProps> = ({
 
   // Oblicz regresję liniową na danych przetransformowanych
   const regressionLog = ss.linearRegression(dataPairsLog);
-  const linearLog = ss.linearRegressionLine(regressionLog);
+  // const linearLog = ss.linearRegressionLine(regressionLog);
 
   // Wyznacz parametry modelu potęgowego
   const lnA = regressionLog.b; // Wyraz wolny

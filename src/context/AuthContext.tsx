@@ -1,10 +1,11 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useState, ReactNode, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api, { setAuthToken, refreshToken as refreshTokenApi } from '../api';
+import api, { setAuthToken, refreshToken as refreshTokenApi, login as loginApi, getUserRoles } from '../api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isAdmin: boolean;
   accessToken: string | null;
   refreshToken: string | null;
   login: (accessToken: string, refreshToken: string) => void;
@@ -17,6 +18,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('accessToken'));
   const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem('refreshToken'));
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   const login = (newAccessToken: string, newRefreshToken: string) => {
@@ -30,17 +32,30 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setIsAdmin(false);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     setAuthToken(null); // Usuń token z axios
     navigate('/');
   };
 
-  useEffect(() => {
-    setAuthToken(accessToken); // Ustawienie tokena na początkowym ładowaniu
+  const fetchUserRolesAndSetAdmin = async () => {
+    try {
+      const roles: string[] = await getUserRoles();
+      setIsAdmin(roles.includes('Admin'));
+    } catch (error) {
+      console.error('Błąd podczas pobierania ról użytkownika:', error);
+      logout();
+    }
+  };
 
+  useEffect(() => {
     const initializeAuth = async () => {
-      setLoading(false); // Ponieważ nie mamy endpointu validate, od razu kończymy ładowanie
+      if (accessToken) {
+        setAuthToken(accessToken);
+        await fetchUserRolesAndSetAdmin();
+      }
+      setLoading(false);
     };
     initializeAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,6 +75,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
               const data = await refreshTokenApi(currentRefreshToken);
               const { accessToken: newAccessToken, refreshToken: newRefreshToken } = data;
               login(newAccessToken, newRefreshToken);
+              await fetchUserRolesAndSetAdmin();
               originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
               return api(originalRequest);
             } catch (refreshError) {
@@ -88,7 +104,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, accessToken, refreshToken, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, accessToken, refreshToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

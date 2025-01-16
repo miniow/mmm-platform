@@ -1,0 +1,269 @@
+/* src/styles/Nodes.scss */
+
+/* Animacje */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stylizacja dla wszystkich węzłów */
+.node {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  animation: fadeIn 0.5s ease-in-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &.merge-node,
+  &.append-node,
+  &.filter-node,
+  &.group-node,
+  &.data-modifier-node,
+  &.file-source-node,
+  &.final-node {
+    /* Specyficzne style dla każdego typu węzła, jeśli potrzebne */
+  }
+
+  .node-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .node-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .node-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+
+    &.delete-button {
+      background: #f44336;
+      color: #fff;
+
+      &:hover {
+        background: #d32f2f;
+      }
+    }
+
+    &.config-button,
+    &.view-data-button {
+      background: #2196F3;
+      color: #fff;
+
+      &:hover {
+        background: #1976D2;
+      }
+    }
+
+    &.view-data-button {
+      margin-left: 10px;
+    }
+
+    &.submit-button {
+      padding: 10px 15px;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background: #45a049;
+      }
+
+      &:disabled {
+        background: #9E9E9E;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+
+    label {
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .form-select,
+    .form-input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .aggregation-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    span {
+      flex: 1;
+      font-size: 0.9rem;
+    }
+
+    .aggregation-select {
+      flex: 1;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* Stylizacja dla Palety Węzłów */
+.node-palette {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  background-color: #f7f7f7;
+  width: 200px;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  .palette-section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    border-left: 4px solid #2196F3;
+  }
+
+  .node-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+      background-color: #e0e0e0;
+      transform: translateY(-2px);
+    }
+
+    .node-icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+}
+
+/* Stylizacja kontenera DataFlow */
+.data-flow-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.flow-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-controls {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  background-color: #fafafa;
+  display: flex;
+  align-items: center;
+}
+
+.save-button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #45a049;
+  }
+
+  &:disabled {
+    background-color: #9E9E9E;
+    cursor: not-allowed;
+  }
+}
+
+.error-message {
+  color: #f44336;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.react-flow-wrapper {
+  flex: 1;
+  border: 1px solid #ccc;
+}
+
+/* Stylizacja dla FinalNode */
+.final-node {
+  width: 300px; /* Zwiększona szerokość dla FinalNode */
+}
+
+.data-grid-container {
+  height: 400px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.view-data-button {
+  background: #2196F3;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.submit-button {
+  margin-top: 10px;
+}

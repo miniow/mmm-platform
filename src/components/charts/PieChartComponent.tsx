@@ -27,7 +27,7 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({ data, dataKey, na
             fill="#8884d8"
             label
           >
-            {data.map((entry, index) => (
+            {data.map(( index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>

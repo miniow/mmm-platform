@@ -1,9 +1,53 @@
 {
+    "PBSystemInfo": "System powstał na Wydziale Informatyki Politechniki Białostockiej.",
     "homeTitle": "Strona Główna",
+    "aboutTitle": "O nas",
     "welcomeMessage": "Witamy na stronie głównej!",
     "learnMore": "Dowiedz się więcej",
     "features": "Nasze Funkcje",
     "benefits": "Dlaczego My?",
     "startToday": "Rozpocznij już dziś!",
-    "contactUs": "Skontaktuj się z nami"
-}
+    "contactUs": "Skontaktuj się z nami",
+    
+    "homeFeature1Title": "Analiza Danych",
+    "homeFeature1Description": "Przetwarzaj i analizuj duże zbiory danych marketingowych w czasie rzeczywistym.",
+    
+    "homeFeature2Title": "Prognozowanie",
+    "homeFeature2Description": "Prognozuj przyszłe wyniki kampanii marketingowych na podstawie historycznych danych.",
+    
+    "homeFeature3Title": "Optymalizacja Budżetu",
+    "homeFeature3Description": "Optymalizuj alokację budżetu marketingowego dla maksymalnej efektywności.",
+    
+    "benefitsItem1": "Precyzyjne modele predykcyjne",
+    "benefitsItem2": "Intuicyjny interfejs użytkownika",
+    "benefitsItem3": "Wsparcie ekspertów",
+    "benefitsItem4": "Integracja z popularnymi narzędziami marketingowymi",
+    
+    "navbarHome": "Strona Główna",
+    "navbarWorkspaces": "Przestrzenie robocze",
+    "navbarData": "Dane",
+    "navbarProfile": "Profil",
+    "navbarAbout": "O nas",
+    "navbarAdmin": "Admin",
+    "navbarLogout": "Wyloguj się",
+    "navbarLogin": "Zaloguj się",
+    "navbarRegister": "Zarejestruj się",
+    "navbarNoAccount": "Nie masz konta?",
+    "navbarRegisterNow": "Zarejestruj się",
+    "navbarHaveAccount": "Masz już konto?",
+    "navbarLoginNow": "Zaloguj się",
+  
+    "registerTitle": "Zarejestruj się",
+    "registerEmailLabel": "Email:",
+    "registerPasswordLabel": "Hasło:",
+    "registerButton": "Zarejestruj się",
+    "registrationError": "Rejestracja nie powiodła się.",
+  
+    "loginTitle": "Zaloguj się",
+    
+    "loginEmailLabel": "Email:",
+    "loginPasswordLabel": "Hasło:",
+    "loginButton": "Zaloguj się",
+    "loginError": "Logowanie nie powiodło się."
+  }
+  

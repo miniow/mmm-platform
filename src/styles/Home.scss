@@ -1,89 +1,184 @@
+/* src/styles/Home.scss */
+
+@import 'variables';
+
 .home-container {
-    font-family: Arial, sans-serif;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
+  padding: 20px;
+  background-color: $secondary-color-light;
+  min-height: 100vh;
+  color: $body-text-color-medium;
   
   .hero-section {
-    background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
-    color: #fff;
-    padding: 100px 20px;
     text-align: center;
-  }
-  
-  .hero-section h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-  }
-  
-  .hero-section p {
-    font-size: 18px;
-    margin-bottom: 30px;
-  }
-  
-  .cta-button {
-    background-color: #FF6B6B;
-    color: #fff;
-    border: none;
-    padding: 15px 30px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .cta-button:hover {
-    background-color: #FF4B4B;
-  }
-  
-  .features-section, .benefits-section {
     padding: 60px 20px;
-    text-align: center;
+    background-color: $primary-color;
+    color: $title-color-dark;
+    
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: $title-color-dark;
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: $body-text-color-dark;
+    }
+    
+    .cta-button {
+      padding: 12px 24px;
+      background-color: $secondary-color;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+        transform: translateY(-2px);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
   }
-  
-  .features-section h2, .benefits-section h2 {
-    font-size: 36px;
-    margin-bottom: 40px;
+
+  .features-section,
+  .benefits-section {
+    padding: 40px 20px;
+    background-color: #fff;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: $primary-color-dark;
+    }
+    
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      
+      .feature-item {
+        flex: 1 1 250px;
+        padding: 20px;
+        border: 1px solid $list-border-color;
+        border-radius: 8px;
+        background-color: $secondary-color-light;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        h3 {
+          margin-bottom: 15px;
+          color: $panel-color;
+        }
+        
+        p {
+          color: $body-text-color-medium;
+          font-size: 1rem;
+        }
+      }
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      text-align: center;
+      
+      li {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: $color-success-background;
+        color: $color-success-text;
+        border: 1px solid $color-success-border;
+        border-radius: 4px;
+      }
+    }
   }
-  
-  .features-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .feature-item {
-    background-color: #f9f9f9;
-    padding: 30px;
-    border-radius: 10px;
-    width: 300px;
-  }
-  
-  .feature-item h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-  
-  .benefits-section ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .benefits-section li {
-    font-size: 18px;
-    margin: 10px 0;
-  }
-  
+
   .cta-footer {
-    background-color: #333;
-    color: #fff;
-    padding: 60px 20px;
     text-align: center;
+    padding: 60px 20px;
+    background-color: $primary-color;
+    color: $title-color-dark;
+    
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    
+    .cta-button {
+      padding: 12px 24px;
+      background-color: $secondary-color;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+        transform: translateY(-2px);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
   }
-  
-  .cta-footer h2 {
-    font-size: 32px;
-    margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 40px 10px;
+      
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+      
+      .cta-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+    
+    .features-section,
+    .benefits-section {
+      padding: 30px 10px;
+    }
+    
+    .features-grid {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .cta-footer {
+      padding: 40px 10px;
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .cta-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
   }
-  
+}

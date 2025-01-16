@@ -1,3 +1,4 @@
+/* src/styles/Workspaces.scss */
 .workspaces {
     display: flex;
     flex-direction: column;
@@ -6,22 +7,51 @@
     padding: 20px;
 
     .workspace-grid {
+        width: 100%;
+        max-width: 1200px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
+        flex-direction: column;
+        gap: 40px;
     }
 
     .workspace-add {
         width: 200px;
         height: 150px;
         border: 2px dashed #000;
+        border-radius: 8px;
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
+        background-color: #f0f0f0;
+        transition: background-color 0.3s, border-color 0.3s;
 
         .workspace-add-icon {
             font-size: 48px;
+            color: #555;
+        }
+
+        &:hover {
+            background-color: #e0e0e0;
+            border-color: #555;
+        }
+    }
+
+    .workspace-section {
+        width: 100%;
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .workspace-section-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
     }
 }
