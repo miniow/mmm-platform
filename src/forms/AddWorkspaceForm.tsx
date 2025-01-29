@@ -26,6 +26,7 @@ const AddWorkspaceForm: React.FC<AddWorkspaceFormProps> = ({ onAddWorkspace }) =
         const fetchPipelines = async () => {
             try {
                 const response = await api.get<DataPipeline[]>('/api/DataPipelines');
+                console.log("Fetched pipelines from backend:", response.data); 
                 setPipelines(response.data);
             } catch (err) {
                 console.error("Failed to fetch data pipelines:", err);
@@ -44,20 +45,28 @@ const AddWorkspaceForm: React.FC<AddWorkspaceFormProps> = ({ onAddWorkspace }) =
             let pipelineId: string | undefined = selectedPipeline;
 
             if (isCreatingPipeline) {
+                console.log("Creating new pipeline with name:", newPipelineName);
                 // Tworzenie nowego DataPipeline
-                const pipelineResponse = await api.post('/api/DataPipelines', { name: newPipelineName, userId: "currentUser" });
+                const pipelineResponse = await api.post('/api/DataPipelines', { 
+                    name: newPipelineName, 
+                    userId: "currentUser" 
+                });
+                console.log("New pipeline returned from backend:", pipelineResponse.data);
+
                 const newPipeline: DataPipeline = pipelineResponse.data;
                 pipelineId = newPipeline.id;
             }
 
+            console.log("Creating workspace with name:", name, "and pipelineId:", pipelineId);
             // Tworzenie nowego Workspace z powiązanym DataPipeline
             await onAddWorkspace(name, pipelineId);
-            
+
             // Resetowanie formularza po sukcesie
             setName('');
             setSelectedPipeline('');
             setNewPipelineName('');
             setIsCreatingPipeline(false);
+
         } catch (err) {
             console.error("Failed to add workspace:", err);
             setError("Failed to add workspace. Please try again.");
@@ -70,6 +79,7 @@ const AddWorkspaceForm: React.FC<AddWorkspaceFormProps> = ({ onAddWorkspace }) =
         <form className="add-workspace-form" onSubmit={handleSubmit}>
             <h2>Add New Workspace</h2>
             {error && <div className="error-message">{error}</div>}
+            
             <div className="form-group">
                 <label htmlFor="workspaceName">Workspace Name:</label>
                 <input 

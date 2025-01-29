@@ -23,7 +23,6 @@ i18n
     lng: 'pl', // Język domyślny
     fallbackLng: 'en', // Język zapasowy
 
-    keySeparator: false, // Używamy prostych kluczy
 
     interpolation: {
       escapeValue: false, // React zabezpiecza przed XSS

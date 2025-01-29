@@ -21,10 +21,7 @@ import '@xyflow/react/dist/style.css';
 import FileSourceNode from './nodes/FileSourceNode';
 import FinalNode from './nodes/FinalNode'; 
 import DataModifierNode from './nodes/DataModifierNode';
-import MergeNode from './nodes/MergeNode';
-import AppendNode from './nodes/AppendNode';
 import FilterNode from './nodes/FilterNode';
-import GroupNode from './nodes/GroupNode';
 import NodePalette from '../components/NodePalette'; // Importowanie NodePalette
 import api from '../api'; 
 import { AddDataFlowDto, DataPipeline, FlowData } from '../types';
@@ -155,8 +152,10 @@ const DataFlow: React.FC<DataFlowProps> = ({ initialNodes = [], initialEdges = [
         }
   
         const response = await api.get(`/api/datapipelines/${pipelineId}/flow`);
-        console.log('Response data:', response.data); // Debugging
-  
+        console.log('Response data:', response.data);
+        console.log('response.data typeof:', typeof response.data);
+        console.log('response.data.nodes:', response.data.nodes);
+        console.log('response.data.edges:', response.data.edges);
         // Bez parsowania, bo dane są już obiektem
         const { nodes, edges } = deserializeFlowData(response.data);
   

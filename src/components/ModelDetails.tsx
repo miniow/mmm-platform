@@ -169,6 +169,7 @@ const ModelDetails: React.FC = () => {
           modelId={model.model_id}
           availableColumns={filteredColumns}
           modelDetails={model}
+          onModelTrained={fetchModelDetails}
         />
       </TabPanel>
 

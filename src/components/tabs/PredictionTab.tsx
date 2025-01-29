@@ -1,5 +1,4 @@
 // src/components/tabs/PredictionTab.tsx
-
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -18,14 +17,29 @@ import {
   CardContent,
   Card,
 } from "@mui/material";
-import { PieChart, Pie, Cell, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 import { PredictionResponse } from "../../types";
+import { useTranslation } from "react-i18next"; // ← import i18n hook
 
 interface PredictionTabProps {
   modelId: string;
 }
 
 const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
+  const { t } = useTranslation(); // ← używamy hooka tłumaczeń
+
   const [predictions, setPredictions] = useState<number[]>([]);
   const [actual, setActual] = useState<number[]>([]);
   const [target, setTarget] = useState<string>("");
@@ -49,12 +63,12 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}), // Wysyłamy pusty obiekt, ponieważ model_id jest w ścieżce
+        body: JSON.stringify({}), 
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Nie udało się wykonać predykcji.");
+        throw new Error(errorData.detail || t("predictionTab.predictionError"));
       }
 
       const data: PredictionResponse = await response.json();
@@ -64,14 +78,15 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
       setActual(data.actual);
       setTarget(data.target);
       setMse(data.mean_squared_error);
-      setSuccessMessage("Predykcja została wykonana pomyślnie.");
+      setSuccessMessage(t("predictionTab.predictionSuccess"));
     } catch (err: any) {
       console.error("Prediction error:", err);
-      setError(err.message || "Nie udało się wykonać predykcji.");
+      setError(err.message || t("predictionTab.predictionError"));
     } finally {
       setLoading(false);
     }
   };
+
   const lineChartData = predictions.map((pred, index) => ({
     sample: index + 1,
     actual: actual[index],
@@ -79,8 +94,11 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
   }));
 
   const pieChartData = [
-    { name: "błąd", value: mse || 0 },
-    { name: "dokładność", value: 100 - (mse || 0) },
+    { name: t("predictionTab.errorLabel"), value: mse || 0 },
+    {
+      name: t("predictionTab.accuracyLabel"),
+      value: 100 - (mse || 0),
+    },
   ];
 
   const COLORS = ["#FF8042", "#00C49F"];
@@ -88,7 +106,7 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
   return (
     <>
       <Typography variant="h5" gutterBottom>
-        Predykcja
+        {t("predictionTab.title")}
       </Typography>
 
       <Box sx={{ mb: 4 }}>
@@ -98,7 +116,11 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
           onClick={executePrediction}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : "Wykonaj Predykcję"}
+          {loading ? (
+            <CircularProgress size={24} />
+          ) : (
+            t("predictionTab.executeButton")
+          )}
         </Button>
       </Box>
 
@@ -134,7 +156,9 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Dokładność i Błąd Modelu</Typography>
+              <Typography variant="h6">
+                {t("predictionTab.accuracyErrorTitle")}
+              </Typography>
               <ResponsiveContainer width="100%" height={190}>
                 <PieChart>
                   <Pie
@@ -162,7 +186,9 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
 
           <Card>
             <CardContent>
-              <Typography variant="h6">Porównanie Wartości Rzeczywistych i Przewidywanych</Typography>
+              <Typography variant="h6">
+                {t("predictionTab.actualVsPredictedTitle")}
+              </Typography>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart
                   data={lineChartData}
@@ -175,23 +201,23 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
-    dataKey="sample"
-    label={{
-      value: "Tydzień",
-      position: "insideBottomRight",
-      offset: -2,
-      style: { fontSize: 18 }, // Increase font size here
-    }}
-    tick={{ fontSize: 12 }} // Adjust font size for tick labels
-  />
+                    dataKey="sample"
+                    label={{
+                      value: t("predictionTab.weekLabel"),
+                      position: "insideBottomRight",
+                      offset: -2,
+                      style: { fontSize: 18 },
+                    }}
+                    tick={{ fontSize: 12 }}
+                  />
                   <YAxis
                     label={{
-                      value: "Wartość",
+                      value: t("predictionTab.valueLabel"),
                       angle: -90,
                       position: "insideLeft",
                       style: { fontSize: 18 },
                     }}
-                    tick={{ fontSize: 12 }} // Adjust font size for tick labels
+                    tick={{ fontSize: 12 }}
                   />
                   <Tooltip />
                   <Legend />
@@ -199,14 +225,13 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
                     type="monotone"
                     dataKey="actual"
                     stroke="#8884d8"
-                    
-                    name={`Rzeczywiste ${target}`}
+                    name={`${t("predictionTab.actual")} ${target}`}
                   />
                   <Line
                     type="monotone"
                     dataKey="predicted"
                     stroke="#82ca9d"
-                    name={`Przewidywane ${target}`}
+                    name={`${t("predictionTab.predicted")} ${target}`}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -215,24 +240,27 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
         </Box>
       )}
 
-      {/* Wyświetlanie wyników predykcji */}
       {predictions.length > 0 && actual.length > 0 && (
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6" gutterBottom>
-            Wyniki Predykcji
+            {t("predictionTab.predictionResults")}
           </Typography>
 
           <Typography variant="subtitle1" gutterBottom>
-            Kolumna Docelowa: {target}
+            {t("predictionTab.targetColumn")}: {target}
           </Typography>
 
           <TableContainer component={Paper} sx={{ mb: 2 }}>
             <Table size="small" aria-label="predictions table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Próbka</TableCell>
-                  <TableCell align="right">Rzeczywiste {target}</TableCell>
-                  <TableCell align="right">Przewidywane {target}</TableCell>
+                  <TableCell>{t("predictionTab.sample")}</TableCell>
+                  <TableCell align="right">
+                    {t("predictionTab.actual")} {target}
+                  </TableCell>
+                  <TableCell align="right">
+                    {t("predictionTab.predicted")} {target}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -241,7 +269,9 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
                     <TableCell component="th" scope="row">
                       {index + 1}
                     </TableCell>
-                    <TableCell align="right">{actual[index].toFixed(4)}</TableCell>
+                    <TableCell align="right">
+                      {actual[index].toFixed(4)}
+                    </TableCell>
                     <TableCell align="right">{pred.toFixed(4)}</TableCell>
                   </TableRow>
                 ))}
@@ -250,7 +280,8 @@ const PredictionTab: React.FC<PredictionTabProps> = ({ modelId }) => {
           </TableContainer>
 
           <Typography variant="subtitle1" gutterBottom>
-            Średni błąd kwadratowy (MSE): {mse !== null ? mse.toFixed(4) : "N/A"}
+            {t("predictionTab.mseLabel")}{" "}
+            {mse !== null ? mse.toFixed(4) : "N/A"}
           </Typography>
         </Box>
       )}

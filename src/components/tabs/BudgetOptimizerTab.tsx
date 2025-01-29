@@ -1,3 +1,4 @@
+// src/components/BudgetOptimizerTab.tsx
 import React, { useState } from "react";
 import {
   Typography,
@@ -30,6 +31,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { useTranslation } from "react-i18next"; // ← Import hooka i18n
 
 const channelColors: { [key: string]: string } = {
   FB: "#8884d8",
@@ -37,17 +39,19 @@ const channelColors: { [key: string]: string } = {
   Radio: "#ffc658",
 };
 
-interface BudgetOptimizerTabProps {
-  modelId: string;
-}
-
 interface BudgetAllocationResponse {
   channel_names: string[];
   budget_allocation: { [channel: string]: number }[];
   predicted_sales: number[];
 }
 
+interface BudgetOptimizerTabProps {
+  modelId: string;
+}
+
 const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
+  const { t } = useTranslation(); // ← używamy hooka do tłumaczeń
+
   const [totalBudget, setTotalBudget] = useState<number>(300);
   const [weeks, setWeeks] = useState<number>(3);
 
@@ -81,12 +85,12 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
     } catch (err: any) {
       console.error(err);
       if (err.response) {
+        // Tłumaczenie błędu – np. "An error occurred while planning the budget."
         setError(
-          err.response.data.detail ||
-            "Wystąpił błąd podczas planowania budżetu."
+          err.response.data.detail || t("budgetOptimizer.errorPlanning")
         );
       } else {
-        setError("Wystąpił nieoczekiwany błąd.");
+        setError(t("budgetOptimizer.errorUnexpected")); 
       }
     } finally {
       setLoading(false);
@@ -97,7 +101,7 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
     if (!allocation || !channelNames.length) return [];
     return allocation.map((weekAllocation, weekIndex) => {
       const weekData: { week: string; [key: string]: number } = {
-        week: `Tydzień ${weekIndex + 1}`,
+        week: `${t("budgetOptimizer.week")} ${weekIndex + 1}`,
       };
       channelNames.forEach((channel) => {
         weekData[channel] = weekAllocation[channel] || 0;
@@ -109,7 +113,7 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
   const prepareLineChartData = () => {
     if (!sales) return [];
     return sales.map((sale, index) => ({
-      week: `Tydzień ${index + 1}`,
+      week: `${t("budgetOptimizer.week")} ${index + 1}`,
       sales: sale,
     }));
   };
@@ -127,7 +131,11 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           <Tooltip />
           <Legend />
           {channelNames.map((channel, index) => (
-            <Bar key={index} dataKey={channel} fill={channelColors[channel] || "#8884d8"} />
+            <Bar
+              key={index}
+              dataKey={channel}
+              fill={channelColors[channel] || "#8884d8"}
+            />
           ))}
         </BarChart>
       </ResponsiveContainer>
@@ -146,7 +154,12 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="sales" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line
+            type="monotone"
+            dataKey="sales"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -155,7 +168,7 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Optymalizator Budżetu
+        {t("budgetOptimizer.title")} {/* "Budget Optimizer" */}
       </Typography>
 
       {/* Formularz */}
@@ -163,7 +176,7 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Całkowity Budżet"
+              label={t("budgetOptimizer.totalBudget")} // "Total Budget"
               type="number"
               fullWidth
               required
@@ -174,7 +187,7 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Liczba Tygodni"
+              label={t("budgetOptimizer.weeksCount")} // "Number of Weeks"
               type="number"
               fullWidth
               required
@@ -191,7 +204,8 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
               disabled={loading}
               fullWidth
             >
-              {loading ? <CircularProgress size={24} /> : "Plan Budget"}
+              {loading ? <CircularProgress size={24} /> : t("budgetOptimizer.plan")}
+              {/* "Plan" */}
             </Button>
           </Grid>
         </Grid>
@@ -211,7 +225,8 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Alokacja Budżetu
+                {t("budgetOptimizer.allocationTitle")} 
+                {/* "Budget Allocation" */}
               </Typography>
               {renderBarChart()}
             </CardContent>
@@ -223,7 +238,8 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Przewidywana Sprzedaż
+                {t("budgetOptimizer.salesTitle")} 
+                {/* "Predicted Sales" */}
               </Typography>
               {renderLineChart()}
             </CardContent>
@@ -235,20 +251,24 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Tabela Alokacji Budżetu
+                {t("budgetOptimizer.allocationTable")} 
+                {/* "Budget Allocation Table" */}
               </Typography>
               {allocation && (
                 <TableContainer component={Paper}>
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Tydzień</TableCell>
+                        <TableCell>{t("budgetOptimizer.week")}</TableCell>
                         {channelNames.map((channel, index) => (
                           <TableCell key={index} align="right">
                             {channel}
                           </TableCell>
                         ))}
-                        <TableCell align="right">Łączny Budżet</TableCell>
+                        <TableCell align="right">
+                          {t("budgetOptimizer.totalBudgetRow")}
+                          {/* "Total Budget" */}
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -259,7 +279,9 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
                         );
                         return (
                           <TableRow key={weekIndex}>
-                            <TableCell>Tydzień {weekIndex + 1}</TableCell>
+                            <TableCell>
+                              {t("budgetOptimizer.week")} {weekIndex + 1}
+                            </TableCell>
                             {channelNames.map((channel, channelIndex) => (
                               <TableCell key={channelIndex} align="right">
                                 {(weekAllocation[channel] || 0).toFixed(2)}
@@ -284,21 +306,24 @@ const BudgetOptimizerTab: React.FC<BudgetOptimizerTabProps> = ({ modelId }) => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Przewidywana Sprzedaż (Tabela)
+                {t("budgetOptimizer.salesTable")}
+                {/* "Predicted Sales (Table)" */}
               </Typography>
               {sales && (
                 <TableContainer component={Paper}>
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Tydzień</TableCell>
-                        <TableCell align="right">Sprzedaż</TableCell>
+                        <TableCell>{t("budgetOptimizer.week")}</TableCell>
+                        <TableCell align="right">{t("budgetOptimizer.sales")}</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {sales.map((sale, index) => (
                         <TableRow key={index}>
-                          <TableCell>Tydzień {index + 1}</TableCell>
+                          <TableCell>
+                            {t("budgetOptimizer.week")} {index + 1}
+                          </TableCell>
                           <TableCell align="right">{sale.toFixed(2)}</TableCell>
                         </TableRow>
                       ))}

@@ -21,15 +21,26 @@ import {
   Paper,
 } from "@mui/material";
 import { ModelResult } from "../../types";
+import { useTranslation } from "react-i18next";
 
 interface TrainingTabProps {
   modelId: string;
   availableColumns: string[];
   modelDetails: ModelResult;
+  onModelTrained: () => void; // Dodany callback
 }
 
-const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, modelDetails }) => {
-  const [targetColumn, setTargetColumn] = React.useState<string>(modelDetails.target_column || "");
+const TrainingTab: React.FC<TrainingTabProps> = ({
+  modelId,
+  availableColumns,
+  modelDetails,
+  onModelTrained, // Odbiór callbacku
+}) => {
+  const { t } = useTranslation();
+
+  const [targetColumn, setTargetColumn] = React.useState<string>(
+    modelDetails.target_column || ""
+  );
   const [loading, setLoading] = React.useState<boolean>(false);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -38,7 +49,7 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
 
   const handleTrainModel = async () => {
     if (!targetColumn) {
-      setError("Proszę wybrać kolumnę docelową.");
+      setError(t("trainingTab.errorNoTargetColumn") || "");
       return;
     }
 
@@ -57,16 +68,16 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Nie udało się wytrenować modelu.");
+        throw new Error(errorData.detail || t("trainingTab.errorTrainFail"));
       }
 
       const data: ModelResult = await response.json();
-      console.log("Received trained modelDetails:", data); // Logowanie danych
-      setSuccessMessage("Model został pomyślnie wytrenowany.");
-      // Możesz zaktualizować parent komponent poprzez callback lub inne mechanizmy
+      console.log("Received trained modelDetails:", data);
+      setSuccessMessage(t("trainingTab.successTrain"));
+      onModelTrained(); // Wywołanie callbacku
     } catch (err: any) {
       console.error("Failed to train model:", err);
-      setError(err.message || "Nie udało się wytrenować modelu.");
+      setError(err.message || t("trainingTab.errorTrainFail"));
     } finally {
       setLoading(false);
     }
@@ -75,24 +86,26 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
   return (
     <>
       <Typography variant="h5" gutterBottom>
-        Trenowanie Modelu
+        {t("trainingTab.title")}
       </Typography>
       <Typography sx={{ mb: 2 }}>
         {isTrained
-          ? "Model został już wytrenowany. Szczegóły poniżej."
-          : "Wybierz kolumnę, którą chcesz przewidzieć, a następnie kliknij 'Trenuj Model'."}
+          ? t("trainingTab.alreadyTrained")
+          : t("trainingTab.chooseTargetInstruction")}
       </Typography>
 
       {/* Formularz do trenowania modelu */}
       {!isTrained && (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
           <FormControl fullWidth>
-            <InputLabel id="target-column-label">Kolumna docelowa</InputLabel>
+            <InputLabel id="target-column-label">
+              {t("trainingTab.targetColumnLabel")}
+            </InputLabel>
             <Select
               labelId="target-column-label"
               id="target-column-select"
               value={targetColumn}
-              label="Kolumna docelowa"
+              label={t("trainingTab.targetColumnLabel")}
               onChange={(e) => setTargetColumn(e.target.value as string)}
             >
               {availableColumns.map((col) => (
@@ -108,7 +121,7 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
             onClick={handleTrainModel}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : "Trenuj Model"}
+            {loading ? <CircularProgress size={24} /> : t("trainingTab.trainButton")}
           </Button>
         </Box>
       )}
@@ -138,26 +151,26 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
       {/* Wyświetlanie szczegółów modelu po wytrenowaniu */}
       <Box sx={{ mt: 4 }}>
         <Typography variant="h6" gutterBottom>
-          Szczegóły Modelu
+          {t("trainingTab.modelDetailsTitle")}
         </Typography>
 
         <Typography variant="subtitle1" gutterBottom>
-          Typ Modelu: {modelDetails.model_type}
+          {t("trainingTab.modelType")}: {modelDetails.model_type}
         </Typography>
 
         <Typography variant="subtitle1" gutterBottom>
-          Kolumna Docelowa: {modelDetails.target_column || "N/A"}
+          {t("trainingTab.targetColumn")}: {modelDetails.target_column || "N/A"}
         </Typography>
 
         <Typography variant="subtitle1" gutterBottom>
-          Współczynniki:
+          {t("trainingTab.coefficientsLabel")}:
         </Typography>
         <TableContainer component={Paper} sx={{ mb: 2 }}>
           <Table size="small" aria-label="coefficients table">
             <TableHead>
               <TableRow>
-                <TableCell>Cechy</TableCell>
-                <TableCell align="right">Wartość</TableCell>
+                <TableCell>{t("trainingTab.features")}</TableCell>
+                <TableCell align="right">{t("trainingTab.value")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -175,7 +188,7 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
               ) : (
                 <TableRow>
                   <TableCell colSpan={2} align="center">
-                    Brak współczynników.
+                    {t("trainingTab.noCoefficients")}
                   </TableCell>
                 </TableRow>
               )}
@@ -184,34 +197,35 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
         </TableContainer>
 
         <Typography variant="subtitle1" gutterBottom>
-          Przechwytywanie (Intercept):{" "}
+          {t("trainingTab.interceptLabel")}:{" "}
           {typeof modelDetails.intercept === "number" ? modelDetails.intercept.toFixed(4) : "N/A"}
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          Współczynnik determinacji (R² Score):{" "}
+          {t("trainingTab.r2ScoreLabel")}:{" "}
           {typeof modelDetails.score === "number" ? modelDetails.score.toFixed(4) : "N/A"}
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          Średni błąd kwadratowy (MSE):{" "}
+          {t("trainingTab.mseLabel")}:{" "}
           {typeof modelDetails.mse === "number" ? modelDetails.mse.toFixed(4) : "N/A"}
         </Typography>
 
         {modelDetails.model_type === "adstock" && modelDetails.adstock_params && (
           <>
             <Typography variant="subtitle1" gutterBottom>
-              Parametry Adstock:
+              {t("trainingTab.adstockParams")}
             </Typography>
             <TableContainer component={Paper}>
               <Table size="small" aria-label="adstock parameters table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Cechy</TableCell>
+                    <TableCell>{t("trainingTab.features")}</TableCell>
                     <TableCell align="right">Alpha</TableCell>
                     <TableCell align="right">Beta</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {modelDetails.adstock_params && Object.keys(modelDetails.adstock_params).length > 0 ? (
+                  {modelDetails.adstock_params &&
+                  Object.keys(modelDetails.adstock_params).length > 0 ? (
                     Object.entries(modelDetails.adstock_params).map(([feature, params]) => (
                       <TableRow key={feature}>
                         <TableCell component="th" scope="row">
@@ -228,7 +242,7 @@ const TrainingTab: React.FC<TrainingTabProps> = ({ modelId, availableColumns, mo
                   ) : (
                     <TableRow>
                       <TableCell colSpan={3} align="center">
-                        Brak parametrów Adstock.
+                        {t("trainingTab.noAdstockParams")}
                       </TableCell>
                     </TableRow>
                   )}

@@ -22,7 +22,7 @@ import api from "../api";
 import '../styles/WorkspaceDetails.scss';
 
 // Import typów
-import {TrainingData, PredictionResponse, ModelType, Workspace, ModelResult } from '../types';
+import { TrainingData, PredictionResponse, ModelType, Workspace, ModelResult } from '../types';
 
 // Formularz dodawania modelu
 interface AddModelFormProps {
@@ -67,17 +67,28 @@ const AddModelForm: React.FC<AddModelFormProps> = ({ onAddModel, onClose }) => {
 const WorkspaceDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  // 1. Stan dla workspace
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
+  const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(true);
+  const [workspaceError, setWorkspaceError] = useState<string | null>(null);
+  
+  // 2. Stan dla modeli
   const [models, setModels] = useState<ModelResult[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [modelsLoading, setModelsLoading] = useState<boolean>(true);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+
+  // 3. Stan dla modalu i komunikatów
   const [showAddModelForm, setShowAddModelForm] = useState<boolean>(false);
   const [addModelError, setAddModelError] = useState<string | null>(null);
   const [addModelSuccess, setAddModelSuccess] = useState<boolean>(false);
 
-  // Fetch workspace details
+  // --- Pobieranie Workspace ---
   const fetchWorkspaceDetails = async () => {
     if (!id) return;
+    setWorkspaceLoading(true);
+    setWorkspaceError(null);
+
     try {
       const response = await api.get<Workspace>(`/api/Workspace/${id}`);
       const ws = response.data;
@@ -85,33 +96,39 @@ const WorkspaceDetails: React.FC = () => {
       setWorkspace(ws);
     } catch (error) {
       console.error("Failed to fetch workspace details:", error);
-      setError("Nie udało się pobrać szczegółów workspace.");
+      setWorkspaceError("Nie udało się pobrać szczegółów workspace.");
+    } finally {
+      setWorkspaceLoading(false);
     }
   };
 
-  // Fetch models for this workspace
+  // --- Pobieranie Models ---
   const fetchModels = async () => {
     if (!id) return;
+    setModelsLoading(true);
+    setModelsError(null);
+
     try {
       const response = await api.get<ModelResult[]>(`http://127.0.0.1:8000/models/${id}`);
       setModels(response.data);
     } catch (error) {
       console.error("Failed to fetch models:", error);
-      setError("Nie udało się pobrać modeli.");
+      setModelsError("Nie udało się pobrać modeli.");
+    } finally {
+      setModelsLoading(false);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      // Równolegle pobieramy workspace i modele
       await fetchWorkspaceDetails();
       await fetchModels();
-      setLoading(false);
     };
     fetchData();
   }, [id]);
 
-  // Dodaj nowy model
+  // --- Dodaj nowy model ---
   const addModel = async (modelType: ModelType) => {
     if (!id) return;
     try {
@@ -130,18 +147,18 @@ const WorkspaceDetails: React.FC = () => {
     }
   };
 
-  // Usuń model
+  // --- Usuń model ---
   const removeModel = async (modelId: string) => {
     try {
       await api.delete(`/api/models/${modelId}`);
       setModels(prevModels => prevModels.filter(model => model.model_id !== modelId));
     } catch (error) {
       console.error("Failed to remove model:", error);
-      setError("Nie udało się usunąć modelu.");
+      setModelsError("Nie udało się usunąć modelu.");
     }
   };
 
-  // Obsługa dodawania do ulubionych (jeśli jest taka potrzeba)
+  // --- Obsługa ulubionych ---
   const toggleFavorite = async () => {
     if (!workspace) return;
     try {
@@ -150,11 +167,11 @@ const WorkspaceDetails: React.FC = () => {
       setWorkspace(updatedWorkspace);
     } catch (error) {
       console.error("Failed to update favorite status:", error);
-      setError("Nie udało się zaktualizować statusu ulubionego.");
+      setWorkspaceError("Nie udało się zaktualizować statusu ulubionego.");
     }
   };
 
-  // Kolumny dla DataGrid
+  // --- Definicja kolumn DataGrid ---
   const modelColumns: GridColDef[] = [
     { field: 'model_id', headerName: 'Model ID', width: 250 },
     { field: 'model_type', headerName: 'Typ Modelu', width: 150 },
@@ -166,21 +183,23 @@ const WorkspaceDetails: React.FC = () => {
       width: 150,
       renderCell: (params) => (
         <Stack direction="row" spacing={1}>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => navigate(`/models/${params.row.model_id}`)} // Zakładając, że masz stronę dla pojedynczego modelu
-          >
-            Szczegóły
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            size="small"
-            onClick={() => removeModel(params.row.model_id)}
-          >
-            Usuń
-          </Button>
+           <Button
+    variant="outlined"
+    size="small"
+    onClick={() => navigate(`/models/${params.row.model_id}`)}
+    sx={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
+  >
+    Szczegóły
+  </Button>
+  <Button
+    variant="outlined"
+    color="error"
+    size="small"
+    onClick={() => removeModel(params.row.model_id)}
+    sx={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
+  >
+    Usuń
+  </Button>
         </Stack>
       ),
     },
@@ -191,87 +210,108 @@ const WorkspaceDetails: React.FC = () => {
       <Button onClick={() => navigate(-1)} variant="contained" sx={{ mb: 2 }}>
         Powrót
       </Button>
-      {loading ? (
-        <CircularProgress />
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
-      ) : workspace ? (
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            {workspace.name}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Data Utworzenia:</strong> {workspace.date}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            <strong>Liczba Modeli:</strong> {models.length}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<FaPlus />}
-            onClick={() => setShowAddModelForm(true)}
-            sx={{ mb: 2 }}
-          >
-            Dodaj Nowy Model
-          </Button>
 
-          {/* Lista modeli */}
-          <Box sx={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={models.map((model) => ({ id: model.model_id, ...model }))}
-              columns={modelColumns}
-              pageSize={5}
-              rowsPerPageOptions={[5, 10, 20]}
-              autoHeight
-            />
-          </Box>
-
-          {/* Formularz dodawania modelu */}
-          <Modal
-            open={showAddModelForm}
-            onClose={() => setShowAddModelForm(false)}
-            aria-labelledby="add-model-modal"
-            aria-describedby="form-to-add-new-model"
-          >
-            <Box sx={{
-              position: 'absolute' as 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 400,
-              bgcolor: 'background.paper',
-              border: '2px solid #000',
-              boxShadow: 24,
-              p: 4,
-            }}>
-              <AddModelForm onAddModel={addModel} onClose={() => setShowAddModelForm(false)} />
-            </Box>
-          </Modal>
-
-          {/* Komunikaty */}
-          <Snackbar
-            open={addModelSuccess}
-            autoHideDuration={6000}
-            onClose={() => setAddModelSuccess(false)}
-          >
-            <Alert onClose={() => setAddModelSuccess(false)} severity="success" sx={{ width: '100%' }}>
-              Model został pomyślnie dodany!
-            </Alert>
-          </Snackbar>
-          <Snackbar
-            open={!!addModelError}
-            autoHideDuration={6000}
-            onClose={() => setAddModelError(null)}
-          >
-            <Alert onClose={() => setAddModelError(null)} severity="error" sx={{ width: '100%' }}>
-              {addModelError}
-            </Alert>
-          </Snackbar>
-        </Box>
-      ) : (
-        <Typography>Workspace nie został znaleziony.</Typography>
+      {/* Pokazujemy błąd workspace, jeśli wystąpił (tylko tekst) */}
+      {workspaceError && (
+        <Typography color="error" sx={{ mb: 2 }}>
+          {workspaceError}
+        </Typography>
       )}
+
+      {/* Jeśli workspace się ładuje – spinner nad danymi workspace */}
+      {workspaceLoading ? (
+        <CircularProgress />
+      ) : (
+        workspace && (
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h4" gutterBottom>
+              {workspace.name}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Data Utworzenia:</strong> {workspace.date}
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              <strong>Liczba Modeli:</strong> {models.length}
+            </Typography>
+
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<FaPlus />}
+              onClick={() => setShowAddModelForm(true)}
+              sx={{ mb: 2 }}
+            >
+              Dodaj Nowy Model
+            </Button>
+          </Box>
+        )
+      )}
+
+      {/* Sekcja tabelki modeli (z osobnym loaderem i błędem) */}
+      <Box sx={{ mb: 2, width: '100%' }}>
+        {modelsLoading ? (
+          // Spinner tylko dla tabelki
+          <Box display="flex" alignItems="center">
+            <CircularProgress size={24} sx={{ mr: 1 }} />
+            <Typography>Ładuję listę modeli...</Typography>
+          </Box>
+        ) : modelsError ? (
+          <Typography color="error">{modelsError}</Typography>
+        ) : (
+          // Właściwa tabela, jeśli brak błędów
+          <DataGrid
+            rows={models.map((model) => ({ id: model.model_id, ...model }))}
+            columns={modelColumns}
+            pageSize={5}
+            rowsPerPageOptions={[5, 10, 20]}
+            autoHeight
+          />
+        )}
+      </Box>
+
+      {/* Modal dodawania modelu */}
+      <Modal
+        open={showAddModelForm}
+        onClose={() => setShowAddModelForm(false)}
+        aria-labelledby="add-model-modal"
+        aria-describedby="form-to-add-new-model"
+      >
+        <Box sx={{
+          position: 'absolute' as 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <AddModelForm onAddModel={addModel} onClose={() => setShowAddModelForm(false)} />
+        </Box>
+      </Modal>
+
+      {/* Snackbar: sukces dodania modelu */}
+      <Snackbar
+        open={addModelSuccess}
+        autoHideDuration={6000}
+        onClose={() => setAddModelSuccess(false)}
+      >
+        <Alert onClose={() => setAddModelSuccess(false)} severity="success" sx={{ width: '100%' }}>
+          Model został pomyślnie dodany!
+        </Alert>
+      </Snackbar>
+
+      {/* Snackbar: błąd dodawania modelu */}
+      <Snackbar
+        open={!!addModelError}
+        autoHideDuration={6000}
+        onClose={() => setAddModelError(null)}
+      >
+        <Alert onClose={() => setAddModelError(null)} severity="error" sx={{ width: '100%' }}>
+          {addModelError}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

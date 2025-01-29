@@ -1,15 +1,27 @@
 /* src/styles/Navbar.scss */
 @import 'variables';
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $panel-color; // #200F53 zamiast #2c3e50
+  background-color: $panel-color; // #200F53
   padding: 10px 20px;
-  color: $body-text-color-light; // #ecf0f1
-  position: relative;
+  color: $body-text-color-light;  // #DDDDDD
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 
-  .navbar-left, .navbar-right {
+  /* Chowanie navbaru przy scrollu w dół */
+  &--hidden {
+    transform: translateY(-100%);
+  }
+
+  .navbar-left,
+  .navbar-right {
     display: flex;
     align-items: center;
   }
@@ -24,17 +36,19 @@
       height: 40px;
       width: auto;
       transition: transform 0.3s ease;
-      
+
       &:hover {
         transform: scale(1.1);
       }
     }
   }
 
+  /* --- Linki w navbarze --- */
   .navbar-link {
+    position: relative; // dla pseudo-elementu
     display: flex;
     align-items: center;
-    color: $body-text-color-light; // #ecf0f1
+    color: $body-text-color-light; 
     text-decoration: none;
     margin-right: 15px;
     font-size: 1rem;
@@ -45,31 +59,58 @@
       transition: transform 0.3s ease;
     }
 
+    /* Animacja koloru i ikonki przy hover */
     &:hover {
-      color: $body-text-color-medium; // #bdc3c7 (jeśli zdefiniowana)
-      // Jeśli nie masz odpowiedniej zmiennej, możesz dodać ją w _variables.scss
-
+      color: $primary-color-light; // np. #3574F2
       .navbar-icon {
-        transform: scale(1.2);
+        transform: scale(1.3);
       }
     }
 
+    /* Animowane "podkreślenie" pseudo-elementem */
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px; // tuż pod tekstem
+      width: 0;
+      height: 2px;
+      background-color: $primary-color-light;
+      transition: width 0.3s ease;
+    }
+    &:hover::after {
+      width: 100%; // podkreślenie rozsuwane
+    }
+
+    /* Gdy link jest aktywny – pełne podkreślenie */
+    &.active::after {
+      width: 100%;
+    }
+
     &.admin {
-      color: $color-error-text; // #D8000C zamiast #e74c3c
+      color: $color-error-text; // #D8000C
 
       &:hover {
-        color: darken($color-error-text, 10%); // #c0392b (przykład)
+        color: darken($color-error-text, 5%);
         .navbar-icon {
-          transform: scale(1.2);
+          transform: scale(1.3);
         }
+      }
+      /* Możesz zmienić kolor podkreślenia dla admin */
+      &::after {
+        background-color: darken($color-error-text, 5%);
+      }
+      &.active::after {
+        width: 100%;
       }
     }
   }
 
+  /* --- Przyciski (logowanie, wylogowanie) --- */
   .navbar-button {
     background: none;
     border: none;
-    color: $body-text-color-light; // #ecf0f1
+    color: $body-text-color-light;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -83,18 +124,22 @@
     }
 
     &:hover {
-      color: $body-text-color-medium; // #bdc3c7
-
+      color: $primary-color-light; 
       .navbar-icon {
         transform: scale(1.2);
       }
     }
+
+    &.active {
+      text-decoration: underline;
+    }
   }
 
+  /* Link-button (np. w modalu) */
   .link-button {
     background: none;
     border: none;
-    color: $primary-color; // #165FF2 zamiast #3498db
+    color: $primary-color;
     cursor: pointer;
     text-decoration: underline;
     padding: 0;
@@ -102,7 +147,7 @@
     transition: color 0.3s ease;
 
     &:hover {
-      color: darken($primary-color, 10%); // #2980b9 (przykład)
+      color: darken($primary-color, 10%);
     }
   }
 
@@ -125,7 +170,8 @@
     flex-direction: column;
     align-items: flex-start;
 
-    .navbar-left, .navbar-right {
+    .navbar-left,
+    .navbar-right {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -134,7 +180,8 @@
       margin-bottom: 10px;
     }
 
-    .navbar-link, .navbar-button {
+    .navbar-link,
+    .navbar-button {
       margin-right: 0;
       margin-bottom: 10px;
     }

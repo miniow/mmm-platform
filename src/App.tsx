@@ -15,6 +15,7 @@ import { DataProvider } from './context/DataContext';
 import ModelDetails from './components/ModelDetails';
 import WorkspaceDetails from './components/WorkspaceDetails';
 import AdminPanel from './components/admin/AdminPanel';
+import "./styles/App.scss";
 
 const App: React.FC = () => {
   return (
@@ -22,7 +23,8 @@ const App: React.FC = () => {
       <DataProvider>
         <AuthProvider>
           <Navbar />
-          <Routes>
+          <div className="app-content">        
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
 
@@ -84,6 +86,7 @@ const App: React.FC = () => {
               }
             />
           </Routes>
+          </div>
         </AuthProvider>
       </DataProvider>
     </Router>

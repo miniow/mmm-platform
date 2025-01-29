@@ -34,21 +34,20 @@ const DataPipeline: React.FC = () => {
     console.log(dataPipelines);
   }, []);
 
-  // Obsługa zmiany w formularzu
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Tworzenie nowego Data Pipeline
+
   const handleCreate = async () => {
-    if (!form.name.trim()) return; // Walidacja: nie dodawaj pustych nazw
+    if (!form.name.trim()) return; 
     try {
       const newPipeline: Omit<DataPipelineType, 'id'> = {
         name: form.name,
         createdDateTime: new Date().toISOString(),
         lastModified: new Date().toISOString(),
         datasources: [],
-        flowData: { nodes: [], edges: [] }, // Dodanie flowData
+        flowData: { nodes: [], edges: [] },
       };
       const response = await api.post<DataPipelineType>('/api/DataPipelines', newPipeline);
       setDataPipelines([...dataPipelines, response.data]);
@@ -59,7 +58,6 @@ const DataPipeline: React.FC = () => {
     }
   };
 
-  // Aktualizacja istniejącego Data Pipeline
   const handleUpdate = async () => {
     if (editingId === null || !form.name.trim()) return;
     try {
@@ -79,14 +77,13 @@ const DataPipeline: React.FC = () => {
     }
   };
 
-  // Rozpoczęcie edycji Data Pipeline
   const handleEdit = (dp: DataPipelineType) => {
     setEditingId(dp.id);
     setForm({ name: dp.name });
   };
 
-  // Usuwanie Data Pipeline
-  const handleDelete = async (id: string) => { // Zmieniono na string
+
+  const handleDelete = async (id: string) => { 
 
       try {
         await api.delete(`/api/DataPipelines/${id}`);
